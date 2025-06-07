@@ -1,6 +1,7 @@
 <script>
   import Stat from "@/components/Stat.svelte";
   import { botID } from "@/config/env";
+  import { user } from "@/store/user";
   import { fetchJSON } from "@/utils/api";
   import { formatFullDateID } from "@/utils/dateFormat";
   import { onMount } from "svelte";
@@ -13,13 +14,9 @@
   });
 
   async function handleFetch() {
-    const res = await fetchJSON(`/app/${botID}/status`, {});
-    const user = await fetch("https://discord.com/api/users/@me", {
-      headers: {
-        authorization: "Bearer " + localStorage.getItem("token"),
-      },
-    });
-    app = res?.apps;
+    const { apps } = await fetchJSON(`/app/${botID}/status`, {});
+
+    app = apps;
   }
 
   async function handleRestart() {
@@ -43,13 +40,15 @@
   }
 </script>
 
-<main class="mx-auto lg:max-w-7xl">
+<main class="px-4 lg:px-6">
   <div class="my-5 grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 gap-5">
     <Stat
       title="Status Bot"
       value={app?.container ?? "Loading..."}
-      info={`Online ${app?.last_restart ?? "0 hours"}`}
-      detailInfo={`Started at ${app?.startedAt && formatFullDateID(app.startedAt)}`}
+      info={`Online ${app?.last_restart || $app?.last_restart === "Offline" ? "0 hours" : $app?.last_restart}`}
+      detailInfo={app?.startedAt != "Offline"
+        ? `Started at ${app?.startedAt && formatFullDateID(app.startedAt)}`
+        : "Bot is offline"}
     />
     <Stat
       title="CPU Usage"
@@ -92,35 +91,37 @@
         : "Loading..."}
     />
   </div>
-  <div class="w-96 card bg-base-200 border border-base-300">
-    <div class="card-body">
-      <h3 class="card-title">Bot Actions</h3>
-      <p class="text-muted">Restart or stop bot using this buttons.</p>
-      <div class="mt-5 card-actions">
-        <button
-          disabled={loading}
-          onclick={async () => {
-            const sure = confirm("Are you sure?");
-            if (sure) {
-              await handleStop();
-            }
-          }}
-          class="grow btn btn-error">Stop</button
-        >
-        {#if app?.container == "Online"}
+  {#if $user?.id === "793991682310799360" || $user?.id === "454505144068079616"}
+    <div class="w-96 card bg-base-200 border border-base-300">
+      <div class="card-body">
+        <h3 class="card-title">Bot Actions</h3>
+        <p class="text-muted">Restart or stop bot using this buttons.</p>
+        <div class="mt-5 card-actions">
           <button
-            disabled={loading}
-            onclick={handleRestart}
-            class="grow btn btn-primary">Restart</button
+            disabled={loading || app?.container === "Offline"}
+            onclick={async () => {
+              const sure = confirm("Are you sure?");
+              if (sure) {
+                await handleStop();
+              }
+            }}
+            class="grow btn btn-error">Stop</button
           >
-        {:else}
-          <button
-            disabled={loading}
-            onclick={handleRestart}
-            class="grow btn btn-primary">Start</button
-          >
-        {/if}
+          {#if app?.container == "Online"}
+            <button
+              disabled={loading}
+              onclick={handleRestart}
+              class="grow btn btn-primary">Restart</button
+            >
+          {:else}
+            <button
+              disabled={loading}
+              onclick={handleRestart}
+              class="grow btn btn-primary">Start</button
+            >
+          {/if}
+        </div>
       </div>
     </div>
-  </div>
+  {/if}
 </main>

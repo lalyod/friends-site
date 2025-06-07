@@ -1,4 +1,5 @@
 <script>
+  import discordSDK from "@/utils/discord";
   import { onMount } from "svelte";
 
   onMount(async () => {
@@ -9,23 +10,12 @@
     const code = new URLSearchParams(location.search).get("code");
     if (!code) return;
 
-    const res = await fetch("https://discord.com/api/oauth2/token", {
-      method: "POST",
-      body: new URLSearchParams({
-        client_id: "1089840401994748044",
-        client_secret: "discordConfig.CLIENT_SECRET",
-        code: code,
-        grant_type: "authorization_code",
-        redirect_uri: "http://localhost:5173/login",
-        scope: "identify",
-      }).toString(),
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-    });
+    const data = await discordSDK().getToken(code);
 
-    const json = await res.json();
-    localStorage.setItem("token", json.access_token);
+    localStorage.setItem("token", data.access_token);
+    if(data.access_token){
+      location.href = "/"
+    }
   }
 </script>
 
