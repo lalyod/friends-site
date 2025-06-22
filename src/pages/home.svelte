@@ -4,21 +4,32 @@
   import { user } from "@/store/user";
   import { fetchJSON } from "@/utils/api";
   import { formatFullDateID } from "@/utils/dateFormat";
-    import discordSDK from "@/utils/discord";
+  import discordSDK from "@/utils/discord";
   import { onMount } from "svelte";
 
   let app = null;
+  let terminal = null;
   let loading = false;
+  let fetchLoading = false;
 
   onMount(async () => {
     handleFetch();
-    handleDiscordCode()
+    handleDiscordCode();
   });
 
   async function handleFetch() {
-    const { apps } = await fetchJSON(`/app/${botID}/status`, {});
+    try {
+      fetchLoading = true;
+      const { apps } = await fetchJSON(`/app/${botID}/status`, {});
+      const { apps: logs } = await fetchJSON(`/app/${botID}/logs`, {});
 
-    app = apps;
+      terminal = logs.terminal.big;
+      app = apps;
+    } catch (err) {
+      console.log(err);
+    } finally {
+      fetchLoading = false;
+    }
   }
 
   async function handleRestart() {
@@ -48,8 +59,8 @@
     const data = await discordSDK().getToken(code);
 
     localStorage.setItem("token", data.access_token);
-    if(data.access_token){
-      location.href = "/"
+    if (data.access_token) {
+      location.href = "/";
     }
   }
 </script>
@@ -138,4 +149,14 @@
       </div>
     </div>
   {/if}
+  <h3 class="text-xl font-bold mb-3">Logs</h3>
+  <div class="mockup-window border border-base-300 dark:bg-base-200">
+    {#if fetchLoading === true}
+      <div class="h-52 flex items-center justify-center">
+        <div class="loading loading-spinner w-10"></div>
+      </div>
+    {:else}
+      <pre class="max-h-96 mx-3 px-3 mb-3 pb-3 overflow-y-auto">{terminal}</pre>
+    {/if}
+  </div>
 </main>
