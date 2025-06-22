@@ -4,6 +4,7 @@
   import { user } from "@/store/user";
   import { fetchJSON } from "@/utils/api";
   import { formatFullDateID } from "@/utils/dateFormat";
+    import discordSDK from "@/utils/discord";
   import { onMount } from "svelte";
 
   let app = null;
@@ -11,6 +12,7 @@
 
   onMount(async () => {
     handleFetch();
+    handleDiscordCode()
   });
 
   async function handleFetch() {
@@ -36,6 +38,18 @@
     } finally {
       await handleFetch();
       loading = false;
+    }
+  }
+
+  async function handleDiscordCode() {
+    const code = new URLSearchParams(location.search).get("code");
+    if (!code) return;
+
+    const data = await discordSDK().getToken(code);
+
+    localStorage.setItem("token", data.access_token);
+    if(data.access_token){
+      location.href = "/"
     }
   }
 </script>

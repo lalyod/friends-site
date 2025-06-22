@@ -12,7 +12,7 @@ function discordSDK() {
         client_secret: "discordConfig.CLIENT_SECRET",
         code: code,
         grant_type: "authorization_code",
-        redirect_uri: "http://localhost:5173/login",
+        redirect_uri: "https://demo-friends-site.netlify.app/",
         scope: "identify",
       }).toString(),
       headers: {
@@ -24,14 +24,16 @@ function discordSDK() {
   }
 
   /**
-   * @param {String} token 
+   * @param {String} token
    */
   async function getMe(token) {
     const res = await fetch(`${basePath}/users/@me`, {
       headers: {
-        authorization: "Bearer "+ token,
+        authorization: "Bearer " + token,
       },
     });
+
+    if (res.status != 200) throw res.json();
 
     return await res.json();
   }
@@ -39,5 +41,4 @@ function discordSDK() {
   return { getToken, getMe };
 }
 
-
-export default discordSDK
+export default discordSDK;
