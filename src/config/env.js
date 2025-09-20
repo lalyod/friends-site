@@ -6,5 +6,3 @@ export const discordConfig = {
   REDIRECT_URI: import.meta.env["VITE_DISCORD_REDIRECT_URI"],
   GENERATED_URI: import.meta.env["VITE_DISCORD_GENERATED_URI"],
 };
-
-Object.freeze(discordConfig);

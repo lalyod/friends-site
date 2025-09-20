@@ -1,6 +1,5 @@
 <script>
-    import { user } from "@/stores/auth";
-
+  import { clearAuth, user } from "@/stores/auth";
 </script>
 
 <div>
@@ -23,6 +22,9 @@
                   <li><button>Light</button></li>
                 </ul>
               </div>
+            </li>
+            <li>
+              <button onclick={() => clearAuth()}>Logout</button>
             </li>
           </ul>
         </div>
