@@ -1,10 +1,22 @@
 <script>
-  import Layout from "./components/Layout.svelte";
-  import Home from "./pages/home.svelte";
+  import { currentRoute } from "./utils/router";
+
+  let RouterProvider = null;
+
+  $: {
+    switch ($currentRoute) {
+      case "/":
+        import("./pages/home.svelte").then((m) => (RouterProvider = m.default));
+      case "/login":
+        import("./pages/login.svelte").then(
+          (m) => (RouterProvider = m.default),
+        );
+      default:
+        RouterProvider = null;
+    }
+  }
 </script>
 
 <main>
-  <Layout>
-    <Home />
-  </Layout>
+    <svelte:component this={RouterProvider} />
 </main>
