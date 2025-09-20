@@ -1,21 +1,6 @@
 <script>
-  import { user } from "@/store/user";
-  import discordSDK from "@/utils/discord";
-  import { onMount } from "svelte";
+    import { user } from "@/stores/auth";
 
-  const discord = discordSDK();
-
-  onMount(async () => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
-
-    try {
-      const discordUser = await discord.getMe(token);
-      user.set(discordUser);
-    } catch (err) {
-      localStorage.removeItem("token")
-    }
-  });
 </script>
 
 <div>

@@ -1,3 +1,5 @@
+import { discordConfig } from "@/config/env";
+
 const basePath = "https://discord.com/api";
 
 function discordSDK() {
@@ -12,7 +14,7 @@ function discordSDK() {
         client_secret: "discordConfig.CLIENT_SECRET",
         code: code,
         grant_type: "authorization_code",
-        redirect_uri: "https://demo-friends-site.netlify.app/",
+        redirect_uri: discordConfig.REDIRECT_URI,
         scope: "identify",
       }).toString(),
       headers: {

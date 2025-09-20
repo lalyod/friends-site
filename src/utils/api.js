@@ -1,15 +1,15 @@
-import { apiTOKEN, baseURL } from "@/config/env";
+import { API_TOKEN, baseURL } from "@/config/env";
 
 /**
  * @param {String} url
- * @param {RequestInit} opt
+ * @param {RequestInit} [opt]
  * @returns {Promise<any>}
  */
 async function fetchJSON(url, opt) {
   return fetch(`${baseURL}/${url}`, {
     ...opt,
     headers: {
-      "api-token": apiTOKEN,
+      "api-token": API_TOKEN,
     },
   })
     .then((res) => res.json())
