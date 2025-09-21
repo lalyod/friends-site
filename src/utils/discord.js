@@ -11,7 +11,7 @@ function discordSDK() {
       method: "POST",
       body: new URLSearchParams({
         client_id: "1089840401994748044",
-        client_secret: "discordConfig.CLIENT_SECRET",
+        client_secret: discordConfig.CLIENT_SECRET,
         code: code,
         grant_type: "authorization_code",
         redirect_uri: discordConfig.REDIRECT_URI,
